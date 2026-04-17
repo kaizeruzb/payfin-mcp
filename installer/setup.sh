@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # PayFin MCP — bootstrap installer (Mac / Linux / WSL).
-# Запуск: curl -fsSL https://<your-host>/setup.sh | bash
+# Запуск: curl -fsSL https://payfin-installer-production.up.railway.app/setup.sh | bash
 
 set -e
 

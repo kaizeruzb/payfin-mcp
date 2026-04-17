@@ -2,7 +2,7 @@
 <#
 PayFin MCP — bootstrap installer.
 Запуск:
-    irm https://<your-host>/setup.ps1 | iex
+    irm https://payfin-installer-production.up.railway.app/setup.ps1 | iex
 #>
 
 $ErrorActionPreference = 'Stop'

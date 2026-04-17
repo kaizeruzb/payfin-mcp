@@ -6,8 +6,11 @@
 
 1. Подключиться к VPN (`git.ipoint.uz`).
 2. Запустить одну команду в PowerShell:
+
+   _Если PowerShell блокирует выполнение удалённых скриптов — запускать с`Set-ExecutionPolicy -Scope Process Bypass -Force;`._
+
    ```powershell
-   irm https://payfin-installer.up.railway.app/setup.ps1 | iex
+   irm https://payfin-installer-production.up.railway.app/setup.ps1 | iex
    ```
 3. Скрипт попросит 4 токена (инструкция — на странице https://payfin-installer.up.railway.app).
 4. Перезапустить Claude Code.
