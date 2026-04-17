@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>PayFin MCP — установка</title>
+  <style>
+    :root {
+      --bg: #0b0d10;
+      --panel: #151920;
+      --panel-2: #1d2430;
+      --text: #e6e9ef;
+      --muted: #8b93a3;
+      --accent: #7aa2f7;
+      --ok: #9ece6a;
+      --warn: #e0af68;
+      --border: #2a3140;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font: 15px/1.55 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif; }
+    .wrap { max-width: 860px; margin: 0 auto; padding: 48px 24px 96px; }
+    h1 { font-size: 28px; margin: 0 0 8px; letter-spacing: -0.01em; }
+    .lead { color: var(--muted); margin: 0 0 40px; }
+    h2 { font-size: 18px; margin: 36px 0 14px; font-weight: 600; }
+    h3 { font-size: 15px; margin: 18px 0 8px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+    p { margin: 0 0 14px; }
+    code, pre { font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 13.5px; }
+    code { background: var(--panel-2); padding: 2px 6px; border-radius: 4px; color: var(--accent); }
+    .cmd {
+      position: relative;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 20px;
+      overflow-x: auto;
+    }
+    .cmd pre { margin: 0; white-space: pre-wrap; word-break: break-word; color: var(--text); }
+    .copy {
+      position: absolute; top: 12px; right: 12px;
+      background: var(--panel-2); border: 1px solid var(--border); color: var(--text);
+      padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;
+    }
+    .copy:hover { border-color: var(--accent); color: var(--accent); }
+    .copy.ok { color: var(--ok); border-color: var(--ok); }
+    ol { padding-left: 20px; }
+    li { margin-bottom: 8px; }
+    table { width: 100%; border-collapse: collapse; margin: 8px 0 16px; }
+    th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th { color: var(--muted); font-weight: 500; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; }
+    td code { word-break: break-word; }
+    .hint { color: var(--muted); font-size: 13px; }
+    .warn { color: var(--warn); }
+    a { color: var(--accent); }
+    .footer { margin-top: 64px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--border); padding-top: 20px; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>PayFin MCP — установка</h1>
+  <p class="lead">Подключает 4 MCP-сервера в Claude Code. Без Docker. 2 минуты.</p>
+
+  <h2>1. Установи</h2>
+  <p>Открой <b>PowerShell</b> и выполни одну команду:</p>
+  <div class="cmd">
+    <button class="copy" onclick="copyCmd(this)">Скопировать</button>
+    <pre id="install-cmd">irm https://payfin-installer.up.railway.app/setup.ps1 | iex</pre>
+  </div>
+  <p class="hint">На Mac / Linux / WSL:
+    <code>curl -fsSL https://payfin-installer.up.railway.app/setup.sh | bash</code>
+  </p>
+
+  <h2>2. Перед запуском собери 4 токена</h2>
+
+  <h3>KB_TOKEN</h3>
+  <p>Формат <code>pfk_xxx</code>. Получить у <b>Sardorbek</b> в Telegram.</p>
+
+  <h3>GITLAB_TOKEN</h3>
+  <ol>
+    <li>Зайди на <a href="https://git.ipoint.uz" target="_blank" rel="noopener">git.ipoint.uz</a> (нужен VPN)</li>
+    <li>Правый верхний угол → <b>Edit profile</b></li>
+    <li>В меню слева: <b>Access Tokens</b></li>
+    <li>Жми <b>Add new token</b>. Scopes: <code>read_api</code>, <code>read_repository</code></li>
+    <li>Create → скопируй токен (покажется один раз)</li>
+  </ol>
+
+  <h3>CONFLUENCE_PAT</h3>
+  <ol>
+    <li>Зайди на <a href="https://wiki.ipoint.uz" target="_blank" rel="noopener">wiki.ipoint.uz</a></li>
+    <li>Клик по аватару (правый верх) → <b>Profile</b></li>
+    <li><b>Personal Access Tokens</b> → <b>Create token</b></li>
+    <li>Скопируй токен</li>
+  </ol>
+
+  <h3>JIRA_PAT</h3>
+  <ol>
+    <li>Зайди на <a href="https://jira.ipoint.uz" target="_blank" rel="noopener">jira.ipoint.uz</a></li>
+    <li>Аватар → <b>Profile</b></li>
+    <li><b>Personal Access Tokens</b> → <b>Create token</b></li>
+    <li>Скопируй токен</li>
+  </ol>
+
+  <h2>3. Дополнительно выбери роль</h2>
+  <p>Скрипт спросит <code>AGENT_ROLE</code>. Выбери одну:</p>
+  <table>
+    <tr><th>Роль</th><th>Для кого</th></tr>
+    <tr><td><code>pm</code></td><td>Product Manager</td></tr>
+    <tr><td><code>analyst</code></td><td>Бизнес-аналитик</td></tr>
+    <tr><td><code>developer</code></td><td>Разработчик (по умолчанию)</td></tr>
+    <tr><td><code>tech-lead</code></td><td>Тех-лид (полный доступ)</td></tr>
+    <tr><td><code>qa</code></td><td>QA-инженер</td></tr>
+  </table>
+
+  <h2>4. Перезапусти Claude Code</h2>
+  <p>Закрой и открой заново. Проверь что MCP подключены:</p>
+  <div class="cmd">
+    <button class="copy" onclick="copyCmd(this)">Скопировать</button>
+    <pre id="verify-cmd">claude mcp list</pre>
+  </div>
+  <p>В выводе должны быть 4 сервера: <code>payfin-kb</code>, <code>payfin-code</code>, <code>gitlab</code>, <code>atlassian</code>.</p>
+
+  <h2>Если что-то не работает</h2>
+  <p>Пиши в Telegram <b>@Sardorbek</b> с логом ошибки.</p>
+
+  <div class="footer">
+    payfin-mcp · <a href="https://git.ipoint.uz/sbayakhmedov/payfin-mcp">исходники</a> · <a href="/setup.ps1">setup.ps1</a> · <a href="/setup.sh">setup.sh</a>
+  </div>
+</div>
+
+<script>
+  function copyCmd(btn) {
+    const pre = btn.parentElement.querySelector('pre');
+    navigator.clipboard.writeText(pre.textContent.trim()).then(() => {
+      const old = btn.textContent;
+      btn.textContent = 'Скопировано';
+      btn.classList.add('ok');
+      setTimeout(() => { btn.textContent = old; btn.classList.remove('ok'); }, 1200);
+    });
+  }
+</script>
+</body>
+</html>
