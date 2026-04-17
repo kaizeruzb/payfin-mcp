@@ -84,30 +84,33 @@ JIRA_PAT=$(read_required 'JIRA_PAT' '4/4 JIRA_PAT (jira.ipoint.uz -> Personal Ac
 AGENT_ROLE=$(read_choice 'AGENT_ROLE' 'developer' pm analyst developer tech-lead qa admin)
 
 step 'Удаляю старые регистрации MCP'
-for n in payfin-kb payfin-code gitlab atlassian; do claude mcp remove "$n" 2>/dev/null || true; done
+for n in payfin-kb payfin-code gitlab atlassian; do
+  claude mcp remove -s user "$n" 2>/dev/null || true
+  claude mcp remove -s local "$n" 2>/dev/null || true
+done
 ok 'Готово'
 
 step 'Регистрирую MCP серверы в Claude Code'
 
-claude mcp add --transport http payfin-kb \
+claude mcp add -s user --transport http payfin-kb \
   'https://practical-generosity-production-cb1c.up.railway.app/mcp' \
   --header "Authorization: Bearer $KB_TOKEN" && ok 'payfin-kb' || { err 'payfin-kb'; exit 1; }
 
-claude mcp add payfin-code \
+claude mcp add -s user payfin-code \
   -e GITLAB_URL='https://git.ipoint.uz' \
   -e GITLAB_TOKEN="$GITLAB_TOKEN" \
   -e REPOS='broker-api:broker/backend/broker-api,nasiya-api:nasiya/backend/nasiya-api' \
   -e AGENT_ROLE="$AGENT_ROLE" \
   -- npx -y payfin-mcp-code@beta && ok 'payfin-code' || { err 'payfin-code'; exit 1; }
 
-claude mcp add gitlab \
+claude mcp add -s user gitlab \
   -e GITLAB_API_URL='https://git.ipoint.uz/api/v4' \
   -e GITLAB_PERSONAL_ACCESS_TOKEN="$GITLAB_TOKEN" \
   -- npx -y '@zereight/mcp-gitlab' && ok 'gitlab' || { err 'gitlab'; exit 1; }
 
 UVX_BIN="$HOME/.local/bin/uvx"
 [ -x "$UVX_BIN" ] || UVX_BIN="$(command -v uvx)"
-claude mcp add atlassian \
+claude mcp add -s user atlassian \
   -e CONFLUENCE_URL='https://wiki.ipoint.uz' \
   -e JIRA_URL='https://jira.ipoint.uz' \
   -e CONFLUENCE_PERSONAL_TOKEN="$CONFLUENCE_PAT" \
