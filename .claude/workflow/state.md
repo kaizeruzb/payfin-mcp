@@ -4,19 +4,22 @@
 **Size:** L
 **Started:** 2026-04-17
 
+## Status: DONE 2026-04-17
+
+Все задачи завершены, пилот на Mac успешно пройден.
+
 ## Tasks
 
 | # | Task | Status |
 |---|---|---|
-| 0 | Проверить `@payfin` scope на npm | ✅ done (свободен) |
-| 1 | Создать структуру монорепо | 🔄 in_progress |
-| 2 | Портировать payfin-code → packages/mcp-code | ⬜ pending |
-| 3 | Smoke-test через `npm link` | ⬜ pending |
-| 4 | Опубликовать `@payfin/mcp-code@0.1.0-beta.1` | ⬜ pending |
-| 5 | Написать `installer/setup.ps1` | ⬜ pending |
-| 6 | Написать `installer/web` лендинг | ⬜ pending |
-| 7 | Git-репо + Railway deploy | ⬜ pending |
-| 8 | Security-аудит + пилот | ⬜ pending |
+| 1 | Создать структуру монорепо | ✅ done |
+| 2 | Портировать payfin-code → packages/mcp-code | ✅ done |
+| 3 | Smoke-test через `npm link` | ✅ done |
+| 4 | Опубликовать `payfin-mcp-code@0.1.0-beta.2` (unscoped) | ✅ done |
+| 5 | Написать `installer/setup.ps1` + `.sh` | ✅ done |
+| 6 | Написать `installer/web` лендинг | ✅ done |
+| 7 | GitHub репо + Railway deploy | ✅ done |
+| 8 | Security-аудит + пилот | ✅ done |
 
 ## Ключевые решения
 
