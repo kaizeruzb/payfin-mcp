@@ -1,5 +1,5 @@
 {
-  "name": "@payfin/mcp-code",
+  "name": "payfin-mcp-code",
   "version": "0.1.0-beta.1",
   "description": "Read-only code access MCP server for PayFin repositories (npx-friendly, no Docker required)",
   "type": "module",

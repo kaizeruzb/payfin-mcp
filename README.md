@@ -16,7 +16,7 @@
 
 ## Структура монорепо
 
-- `packages/mcp-code/` — npm-пакет `@payfin/mcp-code` (форк `payfin-code` без Docker)
+- `packages/mcp-code/` — npm-пакет `payfin-mcp-code` (форк `payfin-code` без Docker)
 - `installer/setup.ps1` — bootstrap-скрипт для сотрудника
 - `installer/web/` — лендинг на Railway
 

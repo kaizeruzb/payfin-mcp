@@ -20,7 +20,7 @@
 
 ## Ключевые решения
 
-- **npm scope:** `@payfin/mcp-code` (свободен, подтверждено 2026-04-17)
+- **npm scope:** планировали `@payfin/mcp-code`, но org настройка дала PUT 404. Перешли на unscoped `payfin-mcp-code` (опубликовано 2026-04-17)
 - **Кроссплатформенный rg:** пакет `@vscode/ripgrep` (содержит бинарь для win/mac/linux)
 - **Путь кэша репо:** по умолчанию `%APPDATA%/payfin-code/repos` (win) или `~/.payfin-code/repos` (unix), override через `REPOS_PATH`
 - **Никаких изменений в живом Railway** — новый проект `payfin-installer` параллельно

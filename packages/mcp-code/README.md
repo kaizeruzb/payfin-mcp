@@ -1,4 +1,4 @@
-# @payfin/mcp-code
+# payfin-mcp-code
 
 Read-only MCP server for PayFin GitLab repositories. Запускается через `npx`, Docker не нужен.
 
@@ -10,7 +10,7 @@ claude mcp add payfin-code \
   -e GITLAB_TOKEN=glpat_xxx \
   -e REPOS=broker-api:broker/backend/broker-api,nasiya-api:nasiya/backend/nasiya-api \
   -e AGENT_ROLE=developer \
-  -- npx -y @payfin/mcp-code
+  -- npx -y payfin-mcp-code
 ```
 
 ## Переменные окружения

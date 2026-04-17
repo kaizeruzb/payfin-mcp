@@ -4,7 +4,7 @@
 Заменить текущую Docker-установку MCP-серверов PayFin на npx-подход, чтобы сотрудникам не надо было ставить Docker Desktop и проходить 9 шагов.
 
 ## Что трогаем
-- **Создаём:** packages/mcp-code (npm @payfin/mcp-code), installer/setup.ps1, installer/web (лендинг на Railway)
+- **Создаём:** packages/mcp-code (npm `payfin-mcp-code`), installer/setup.ps1, installer/web (лендинг на Railway)
 
 ## Что НЕ трогаем
 - `D:/TECHFLOW3/payfin-kb-v2/` (Railway, работает)
@@ -18,7 +18,7 @@
 | MCP | Как подключается |
 |---|---|
 | payfin-kb | HTTP Bearer (не меняется) |
-| payfin-code | **новое:** `npx -y @payfin/mcp-code` вместо Docker |
+| payfin-code | **новое:** `npx -y payfin-mcp-code` вместо Docker |
 | gitlab | `npx -y @zereight/mcp-gitlab` (не меняется) |
 | atlassian | `uvx mcp-atlassian` (не меняется) |
 

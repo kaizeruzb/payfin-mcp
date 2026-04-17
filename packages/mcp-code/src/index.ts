@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// @payfin/mcp-code — Read-only code access MCP server for PayFin repositories.
+// payfin-mcp-code — Read-only code access MCP server for PayFin repositories.
 //
 // Env:
 //   GITLAB_URL      e.g. https://git.ipoint.uz
