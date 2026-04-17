@@ -166,18 +166,37 @@ if (-not (Test-Path $UvxPath)) {
     -- $UvxPath mcp-atlassian
 if ($LASTEXITCODE -eq 0) { Write-Ok 'atlassian' } else { Write-Err 'atlassian: ошибка'; exit 1 }
 
-# --- Bootstrap-скилл /update --------------------------------------------
-Write-Step 'Скачиваю bootstrap скилл /update'
-$skillDir = Join-Path $env:USERPROFILE '.claude\skills\update'
-New-Item -ItemType Directory -Force -Path $skillDir | Out-Null
+# --- Скиллы с KB --------------------------------------------------------
+Write-Step 'Скачиваю скиллы с KB'
+$skillsRoot = Join-Path $env:USERPROFILE '.claude\skills'
+$KbUrl = 'https://practical-generosity-production-cb1c.up.railway.app'
+New-Item -ItemType Directory -Force -Path $skillsRoot | Out-Null
 try {
-    Invoke-WebRequest `
-        -Uri "https://practical-generosity-production-cb1c.up.railway.app/setup/skills/update?token=$KB_TOKEN" `
-        -OutFile (Join-Path $skillDir 'SKILL.md') `
-        -UseBasicParsing -ErrorAction Stop
-    Write-Ok '/update установлен'
+    $manifest = Invoke-RestMethod -Uri "$KbUrl/setup/manifest?token=$KB_TOKEN" -UseBasicParsing -ErrorAction Stop
+    $names = $manifest.skills.PSObject.Properties.Name
+    $installed = 0
+    $failed = 0
+    foreach ($n in $names) {
+        $dir = Join-Path $skillsRoot $n
+        New-Item -ItemType Directory -Force -Path $dir | Out-Null
+        try {
+            Invoke-WebRequest -Uri "$KbUrl/setup/skills/$n`?token=$KB_TOKEN" `
+                -OutFile (Join-Path $dir 'SKILL.md') -UseBasicParsing -ErrorAction Stop
+            $installed++
+        } catch {
+            $failed++
+        }
+    }
+    if ($manifest.version) {
+        Set-Content -Path (Join-Path $skillsRoot '.version') -Value $manifest.version -NoNewline -Encoding utf8
+    }
+    if ($failed -eq 0) {
+        Write-Ok "$installed скиллов установлено (v$($manifest.version))"
+    } else {
+        Write-Warn "$installed установлено, $failed не скачалось"
+    }
 } catch {
-    Write-Warn "Не удалось скачать /update: $($_.Exception.Message)"
+    Write-Warn "Не удалось получить манифест: $($_.Exception.Message). Запусти /update в Claude Code позже."
 }
 
 # --- Финал ---------------------------------------------------------------
@@ -187,6 +206,7 @@ Write-Host "================================================================`n" 
 Write-Host '  Дальше:' -ForegroundColor White
 Write-Host '    1. Перезапусти Claude Code (закрой и открой)' -ForegroundColor White
 Write-Host '    2. Проверь: claude mcp list (должно быть 4 сервера)' -ForegroundColor White
-Write-Host '    3. Подтяни остальные скиллы: в чате напиши /update' -ForegroundColor White
-Write-Host '    4. Тест: "Покажи composer.json из broker-api"' -ForegroundColor DarkGray
+Write-Host '    3. Тест: "Покажи composer.json из broker-api"' -ForegroundColor DarkGray
+Write-Host ''
+Write-Host '    Для будущих обновлений скиллов: /update в любом чате.' -ForegroundColor DarkGray
 Write-Host ''

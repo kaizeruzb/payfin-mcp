@@ -117,14 +117,38 @@ claude mcp add -s user atlassian \
   -e JIRA_PERSONAL_TOKEN="$JIRA_PAT" \
   -- "$UVX_BIN" mcp-atlassian && ok 'atlassian' || { err 'atlassian'; exit 1; }
 
-step 'Скачиваю bootstrap скилл /update'
+step 'Скачиваю скиллы с KB'
 SKILLS_DIR="$HOME/.claude/skills"
-mkdir -p "$SKILLS_DIR/update"
-if curl -sfL "https://practical-generosity-production-cb1c.up.railway.app/setup/skills/update?token=$KB_TOKEN" \
-     -o "$SKILLS_DIR/update/SKILL.md"; then
-  ok '/update установлен'
+KB_URL='https://practical-generosity-production-cb1c.up.railway.app'
+mkdir -p "$SKILLS_DIR"
+
+manifest=$(curl -sfL "$KB_URL/setup/manifest?token=$KB_TOKEN" || true)
+if [ -z "$manifest" ]; then
+  warn 'Не удалось получить манифест скиллов. Запусти /update внутри Claude Code позже.'
 else
-  warn 'Не удалось скачать /update — проверь KB_TOKEN'
+  manifest_version=$(printf '%s' "$manifest" | node -e 'let d="";process.stdin.on("data",c=>d+=c);process.stdin.on("end",()=>{try{console.log(JSON.parse(d).version||"")}catch(e){}})')
+  skill_names=$(printf '%s' "$manifest" | node -e 'let d="";process.stdin.on("data",c=>d+=c);process.stdin.on("end",()=>{try{console.log(Object.keys(JSON.parse(d).skills||{}).join(" "))}catch(e){}})')
+
+  if [ -z "$skill_names" ]; then
+    warn 'Манифест без скиллов — пропускаю'
+  else
+    installed=0
+    failed=0
+    for name in $skill_names; do
+      mkdir -p "$SKILLS_DIR/$name"
+      if curl -sfL "$KB_URL/setup/skills/$name?token=$KB_TOKEN" -o "$SKILLS_DIR/$name/SKILL.md"; then
+        installed=$((installed + 1))
+      else
+        failed=$((failed + 1))
+      fi
+    done
+    [ -n "$manifest_version" ] && printf '%s' "$manifest_version" > "$SKILLS_DIR/.version"
+    if [ "$failed" -eq 0 ]; then
+      ok "$installed скиллов установлено (v${manifest_version:-unknown})"
+    else
+      warn "$installed установлено, $failed не скачалось"
+    fi
+  fi
 fi
 
 cat <<'DONE'
@@ -135,7 +159,8 @@ cat <<'DONE'
   Дальше:
     1. Перезапусти Claude Code
     2. Проверь: claude mcp list (должно быть 4 сервера)
-    3. Подтяни остальные скиллы: в любом чате напиши /update
-    4. Тест: "Покажи composer.json из broker-api"
+    3. Тест: "Покажи composer.json из broker-api"
+
+  Для будущих обновлений скиллов: /update в любом чате.
 
 DONE
