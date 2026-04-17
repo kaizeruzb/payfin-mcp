@@ -15,10 +15,11 @@ need() { command -v "$1" >/dev/null 2>&1; }
 read_required() {
   local prompt="$1" hint="$2" v
   while true; do
-    [ -n "$hint" ] && printf "    %s\n" "$hint"
-    read -r -p "    $prompt: " v
+    [ -n "$hint" ] && printf "    %s\n" "$hint" >&2
+    printf "    %s: " "$prompt" >&2
+    IFS= read -r v < /dev/tty
     [ -n "$v" ] && { echo "$v"; return; }
-    err 'Значение не может быть пустым.'
+    err 'Значение не может быть пустым.' >&2
   done
 }
 
@@ -26,11 +27,19 @@ read_choice() {
   local prompt="$1" default="$2"; shift 2
   local opts=("$@") hint="[$(IFS=/; echo "${opts[*]}")], Enter = $default" v
   while true; do
-    read -r -p "    $prompt $hint: " v
+    printf "    %s %s: " "$prompt" "$hint" >&2
+    IFS= read -r v < /dev/tty
     [ -z "$v" ] && { echo "$default"; return; }
     for o in "${opts[@]}"; do [ "$o" = "$v" ] && { echo "$v"; return; }; done
-    err "Выбери одно из: ${opts[*]}"
+    err "Выбери одно из: ${opts[*]}" >&2
   done
+}
+
+confirm_tty() {
+  local prompt="$1" v
+  printf "    %s " "$prompt" >&2
+  IFS= read -r v < /dev/tty
+  [ "$v" = "y" ] || [ "$v" = "Y" ]
 }
 
 cat <<'BANNER'
@@ -54,7 +63,8 @@ if ! need uv; then
   warn 'uv не найден, устанавливаю...'
   curl -LsSf https://astral.sh/uv/install.sh | sh
   export PATH="$HOME/.local/bin:$PATH"
-  need uv || { err 'uv так и не появился в PATH'; exit 1; }
+  [ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"
+  need uv || { err 'uv так и не появился в PATH. Перезапусти оболочку и попробуй снова.'; exit 1; }
 fi
 ok 'uv'
 
@@ -63,8 +73,7 @@ if curl -sSf -m 5 -I https://git.ipoint.uz >/dev/null 2>&1; then
   ok 'VPN работает'
 else
   warn 'git.ipoint.uz недоступен. Проверь VPN.'
-  read -r -p '    Продолжить? [y/N]: ' c
-  [ "$c" = "y" ] || [ "$c" = "Y" ] || exit 1
+  confirm_tty 'Продолжить без VPN? [y/N]:' || exit 1
 fi
 
 step 'Собираю токены (4 шт.) + роль'
@@ -80,9 +89,9 @@ ok 'Готово'
 
 step 'Регистрирую MCP серверы в Claude Code'
 
-claude mcp add payfin-kb --transport http \
-  --header "Authorization=Bearer $KB_TOKEN" \
-  'https://practical-generosity-production-cb1c.up.railway.app/mcp' && ok 'payfin-kb' || { err 'payfin-kb'; exit 1; }
+claude mcp add --transport http payfin-kb \
+  'https://practical-generosity-production-cb1c.up.railway.app/mcp' \
+  --header "Authorization: Bearer $KB_TOKEN" && ok 'payfin-kb' || { err 'payfin-kb'; exit 1; }
 
 claude mcp add payfin-code \
   -e GITLAB_URL='https://git.ipoint.uz' \

@@ -133,10 +133,9 @@ Write-Ok 'Готово к установке'
 # --- Установка MCP -------------------------------------------------------
 Write-Step 'Регистрирую MCP серверы в Claude Code'
 
-& claude mcp add payfin-kb `
-    --transport http `
-    --header "Authorization=Bearer $KB_TOKEN" `
-    'https://practical-generosity-production-cb1c.up.railway.app/mcp'
+& claude mcp add --transport http payfin-kb `
+    'https://practical-generosity-production-cb1c.up.railway.app/mcp' `
+    --header "Authorization: Bearer $KB_TOKEN"
 if ($LASTEXITCODE -eq 0) { Write-Ok 'payfin-kb' } else { Write-Err 'payfin-kb: ошибка'; exit 1 }
 
 & claude mcp add payfin-code `
