@@ -1,4 +1,4 @@
-import { execSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import cron from 'node-cron';
@@ -42,32 +42,34 @@ function gitUrl(alias: string): string {
   return url.toString();
 }
 
+function redactUrl(message: string): string {
+  return message.replace(/https?:\/\/[^:/\s]+:[^@\s]+@/g, 'https://<redacted>@');
+}
+
 function cloneRepo(repo: string): { ok: boolean; error?: string } {
   const dest = getRepoPath(repo);
   mkdirSync(REPOS_PATH, { recursive: true });
 
-  try {
-    execSync(`git clone --depth=1 "${gitUrl(repo)}" "${dest}"`, {
-      stdio: 'pipe',
-      timeout: 60_000,
-    });
-    return { ok: true };
-  } catch (e) {
-    return { ok: false, error: (e as Error).message.slice(0, 200) };
-  }
+  const result = spawnSync('git', ['clone', '--depth=1', gitUrl(repo), dest], {
+    stdio: 'pipe',
+    timeout: 60_000,
+    encoding: 'utf-8',
+  });
+  if (result.status === 0) return { ok: true };
+  const err = redactUrl((result.stderr || result.error?.message || 'unknown').slice(0, 300));
+  return { ok: false, error: err };
 }
 
 function pullRepo(repo: string): { ok: boolean; error?: string } {
   const dest = getRepoPath(repo);
-  try {
-    execSync(`git -C "${dest}" pull --ff-only`, {
-      stdio: 'pipe',
-      timeout: 30_000,
-    });
-    return { ok: true };
-  } catch (e) {
-    return { ok: false, error: (e as Error).message.slice(0, 200) };
-  }
+  const result = spawnSync('git', ['-C', dest, 'pull', '--ff-only'], {
+    stdio: 'pipe',
+    timeout: 30_000,
+    encoding: 'utf-8',
+  });
+  if (result.status === 0) return { ok: true };
+  const err = redactUrl((result.stderr || result.error?.message || 'unknown').slice(0, 300));
+  return { ok: false, error: err };
 }
 
 export function syncRepo(alias: string): { ok: boolean; action: 'pull' | 'clone'; message: string } {

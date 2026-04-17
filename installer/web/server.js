@@ -42,8 +42,9 @@ const server = createServer(async (req, res) => {
     });
     res.end(body);
   } catch (e) {
+    console.error(`Request error for ${url.pathname}:`, e);
     res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
-    res.end(`Server error: ${e.message}`);
+    res.end('Internal server error');
   }
 });
 

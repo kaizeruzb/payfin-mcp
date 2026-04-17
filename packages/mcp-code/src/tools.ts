@@ -72,6 +72,9 @@ export function codeGrep(repo: string, pattern: string, searchPath?: string): st
 
   const repoBase = getRepoPath(repo);
   const targetPath = searchPath ? join(repoBase, searchPath) : repoBase;
+  if (!targetPath.startsWith(repoBase)) {
+    return `Error: Path traversal not allowed`;
+  }
 
   const filesOutput = runRipgrep(
     ['--no-heading', '-l', '--max-count=1', pattern, targetPath],
