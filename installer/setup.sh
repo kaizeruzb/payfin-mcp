@@ -117,6 +117,16 @@ claude mcp add -s user atlassian \
   -e JIRA_PERSONAL_TOKEN="$JIRA_PAT" \
   -- "$UVX_BIN" mcp-atlassian && ok 'atlassian' || { err 'atlassian'; exit 1; }
 
+step 'Скачиваю bootstrap скилл /update'
+SKILLS_DIR="$HOME/.claude/skills"
+mkdir -p "$SKILLS_DIR/update"
+if curl -sfL "https://practical-generosity-production-cb1c.up.railway.app/setup/skills/update?token=$KB_TOKEN" \
+     -o "$SKILLS_DIR/update/SKILL.md"; then
+  ok '/update установлен'
+else
+  warn 'Не удалось скачать /update — проверь KB_TOKEN'
+fi
+
 cat <<'DONE'
 
 ================================================================
@@ -124,7 +134,8 @@ cat <<'DONE'
 ================================================================
   Дальше:
     1. Перезапусти Claude Code
-    2. Проверь: claude mcp list
-    3. В любом чате попроси: "Покажи composer.json из broker-api"
+    2. Проверь: claude mcp list (должно быть 4 сервера)
+    3. Подтяни остальные скиллы: в любом чате напиши /update
+    4. Тест: "Покажи composer.json из broker-api"
 
 DONE
