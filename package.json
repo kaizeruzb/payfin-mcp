@@ -1,0 +1,12 @@
+{
+  "name": "payfin-mcp-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build -w @payfin/mcp-code",
+    "publish:beta": "npm publish -w @payfin/mcp-code --access public --tag beta"
+  }
+}
