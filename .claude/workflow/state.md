@@ -8,6 +8,12 @@
 
 Все задачи завершены, пилот на Mac успешно пройден.
 
+После пилота докинули:
+- Полноценный гайд-лендинг по структуре KB `/guide` (требования, роли, troubleshooting, ручная установка, откат)
+- Token-gate на `/`, `/setup.ps1`, `/setup.sh` (валидация через KB)
+- `X-Robots-Tag: noindex` + `robots.txt` + security headers (X-Frame-Options, referrer-policy, etc.)
+- JS-автоподстановка `?token=` в копируемые команды лендинга
+
 ## Tasks
 
 | # | Task | Status |
