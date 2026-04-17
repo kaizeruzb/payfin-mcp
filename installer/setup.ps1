@@ -152,12 +152,17 @@ if ($LASTEXITCODE -eq 0) { Write-Ok 'payfin-code' } else { Write-Err 'payfin-cod
     -- npx -y '@zereight/mcp-gitlab'
 if ($LASTEXITCODE -eq 0) { Write-Ok 'gitlab' } else { Write-Err 'gitlab: ошибка'; exit 1 }
 
+$UvxPath = Join-Path $env:USERPROFILE '.local\bin\uvx.exe'
+if (-not (Test-Path $UvxPath)) {
+    $fallback = Get-Command uvx -ErrorAction SilentlyContinue
+    if ($fallback) { $UvxPath = $fallback.Source }
+}
 & claude mcp add atlassian `
     -e CONFLUENCE_URL='https://wiki.ipoint.uz' `
     -e JIRA_URL='https://jira.ipoint.uz' `
     -e CONFLUENCE_PERSONAL_TOKEN=$CONFLUENCE_PAT `
     -e JIRA_PERSONAL_TOKEN=$JIRA_PAT `
-    -- uvx mcp-atlassian
+    -- $UvxPath mcp-atlassian
 if ($LASTEXITCODE -eq 0) { Write-Ok 'atlassian' } else { Write-Err 'atlassian: ошибка'; exit 1 }
 
 # --- Финал ---------------------------------------------------------------

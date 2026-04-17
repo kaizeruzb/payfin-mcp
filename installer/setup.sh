@@ -105,12 +105,14 @@ claude mcp add gitlab \
   -e GITLAB_PERSONAL_ACCESS_TOKEN="$GITLAB_TOKEN" \
   -- npx -y '@zereight/mcp-gitlab' && ok 'gitlab' || { err 'gitlab'; exit 1; }
 
+UVX_BIN="$HOME/.local/bin/uvx"
+[ -x "$UVX_BIN" ] || UVX_BIN="$(command -v uvx)"
 claude mcp add atlassian \
   -e CONFLUENCE_URL='https://wiki.ipoint.uz' \
   -e JIRA_URL='https://jira.ipoint.uz' \
   -e CONFLUENCE_PERSONAL_TOKEN="$CONFLUENCE_PAT" \
   -e JIRA_PERSONAL_TOKEN="$JIRA_PAT" \
-  -- uvx mcp-atlassian && ok 'atlassian' || { err 'atlassian'; exit 1; }
+  -- "$UVX_BIN" mcp-atlassian && ok 'atlassian' || { err 'atlassian'; exit 1; }
 
 cat <<'DONE'
 
