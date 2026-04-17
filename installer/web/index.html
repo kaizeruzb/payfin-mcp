@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>PayFin MCP — установка</title>
+  <title>PayFin MCP — установка (без Docker)</title>
   <style>
     :root {
       --bg: #0b0d10;
@@ -14,15 +14,17 @@
       --accent: #7aa2f7;
       --ok: #9ece6a;
       --warn: #e0af68;
+      --err: #f7768e;
       --border: #2a3140;
     }
     * { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font: 15px/1.55 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif; }
-    .wrap { max-width: 860px; margin: 0 auto; padding: 48px 24px 96px; }
-    h1 { font-size: 28px; margin: 0 0 8px; letter-spacing: -0.01em; }
-    .lead { color: var(--muted); margin: 0 0 40px; }
-    h2 { font-size: 18px; margin: 36px 0 14px; font-weight: 600; }
-    h3 { font-size: 15px; margin: 18px 0 8px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+    .wrap { max-width: 900px; margin: 0 auto; padding: 48px 24px 96px; }
+    h1 { font-size: 30px; margin: 0 0 6px; letter-spacing: -0.01em; }
+    .lead { color: var(--muted); margin: 0 0 8px; font-size: 15px; }
+    .badge { display: inline-block; margin-left: 8px; padding: 2px 8px; border-radius: 999px; background: var(--panel-2); color: var(--ok); font-size: 11px; border: 1px solid var(--ok); vertical-align: middle; }
+    h2 { font-size: 20px; margin: 44px 0 14px; font-weight: 600; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+    h3 { font-size: 15px; margin: 22px 0 8px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
     p { margin: 0 0 14px; }
     code, pre { font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 13.5px; }
     code { background: var(--panel-2); padding: 2px 6px; border-radius: 4px; color: var(--accent); }
@@ -31,105 +33,233 @@
       background: var(--panel);
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 20px 20px;
+      padding: 18px 20px;
+      margin: 10px 0;
       overflow-x: auto;
     }
     .cmd pre { margin: 0; white-space: pre-wrap; word-break: break-word; color: var(--text); }
     .copy {
-      position: absolute; top: 12px; right: 12px;
+      position: absolute; top: 10px; right: 10px;
       background: var(--panel-2); border: 1px solid var(--border); color: var(--text);
-      padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;
+      padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 12px;
     }
     .copy:hover { border-color: var(--accent); color: var(--accent); }
     .copy.ok { color: var(--ok); border-color: var(--ok); }
-    ol { padding-left: 20px; }
-    li { margin-bottom: 8px; }
+    ol, ul { padding-left: 20px; }
+    li { margin-bottom: 6px; }
     table { width: 100%; border-collapse: collapse; margin: 8px 0 16px; }
-    th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
-    th { color: var(--muted); font-weight: 500; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; }
-    td code { word-break: break-word; }
+    th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; font-size: 14px; }
+    th { color: var(--muted); font-weight: 500; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+    td code { word-break: break-word; font-size: 12.5px; }
     .hint { color: var(--muted); font-size: 13px; }
     .warn { color: var(--warn); }
+    .ok-text { color: var(--ok); }
+    .err-text { color: var(--err); }
     a { color: var(--accent); }
+    details { border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; margin: 10px 0; background: var(--panel); }
+    details summary { cursor: pointer; color: var(--text); font-weight: 500; }
+    details[open] summary { margin-bottom: 10px; }
+    .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin: 10px 0 0; }
+    .tab { padding: 8px 16px; cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; font-size: 14px; }
+    .tab.active { color: var(--text); border-bottom-color: var(--accent); }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
     .footer { margin-top: 64px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--border); padding-top: 20px; }
+    kbd { display: inline-block; padding: 1px 6px; background: var(--panel-2); border: 1px solid var(--border); border-radius: 4px; font-family: ui-monospace, monospace; font-size: 12px; }
   </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>PayFin MCP — установка</h1>
-  <p class="lead">Подключает 4 MCP-сервера в Claude Code. Без Docker. 2 минуты.</p>
+  <h1>PayFin MCP<span class="badge">без Docker</span></h1>
+  <p class="lead">Установка 4 MCP-серверов (payfin-kb, payfin-code, gitlab, atlassian) и 10 скиллов для Claude Code — одной командой, ~2 минуты.</p>
 
-  <h2>1. Установи</h2>
-  <p>Открой <b>PowerShell</b> и выполни одну команду:</p>
-  <div class="cmd">
-    <button class="copy" onclick="copyCmd(this)">Скопировать</button>
-    <pre id="install-cmd">irm https://payfin-installer-production.up.railway.app/setup.ps1 | iex</pre>
+  <h2>Требования</h2>
+  <table>
+    <tr><th>Компонент</th><th>Windows</th><th>macOS</th></tr>
+    <tr><td>Node.js 20+</td><td><code>winget install OpenJS.NodeJS.LTS</code></td><td><code>brew install node</code></td></tr>
+    <tr><td>Git</td><td><a href="https://git-scm.com/download/win" target="_blank" rel="noopener">git-scm.com</a></td><td>Уже есть (Xcode CLT)</td></tr>
+    <tr><td>Claude Code CLI</td><td colspan="2"><code>npm i -g @anthropic-ai/claude-code</code></td></tr>
+    <tr><td>VPN</td><td colspan="2">Корпоративный VPN до <code>git.ipoint.uz</code>, <code>jira.ipoint.uz</code>, <code>wiki.ipoint.uz</code></td></tr>
+  </table>
+  <p class="hint"><span class="ok-text">Docker не нужен</span> — в отличие от старой схемы установки. <code>uv</code> (для Atlassian MCP) ставится автоматически.</p>
+
+  <h2>Быстрая установка (2 минуты)</h2>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="win">Windows (PowerShell)</div>
+    <div class="tab" data-tab="mac">macOS / Linux / WSL</div>
   </div>
-  <p class="hint">На Mac / Linux / WSL:
-    <code>curl -fsSL https://payfin-installer-production.up.railway.app/setup.sh | bash</code>
-  </p>
 
-  <h2>2. Перед запуском собери 4 токена</h2>
+  <div class="tab-content active" data-tab-content="win">
+    <div class="cmd">
+      <button class="copy" onclick="copyCmd(this)">Скопировать</button>
+      <pre id="win-cmd">irm https://payfin-installer-production.up.railway.app/setup.ps1 | iex</pre>
+    </div>
+    <p class="hint">Если блокирует политика выполнения:
+      <code>Set-ExecutionPolicy -Scope Process Bypass -Force</code> перед командой.
+    </p>
+  </div>
+
+  <div class="tab-content" data-tab-content="mac">
+    <div class="cmd">
+      <button class="copy" onclick="copyCmd(this)">Скопировать</button>
+      <pre id="mac-cmd">curl -fsSL https://payfin-installer-production.up.railway.app/setup.sh | bash</pre>
+    </div>
+  </div>
+
+  <h3>Что делает скрипт</h3>
+  <ol>
+    <li>Проверяет Node 20+, git, Claude Code CLI, <code>uv</code> (устанавливает сам если нет)</li>
+    <li>Проверяет доступ к <code>git.ipoint.uz</code> (VPN)</li>
+    <li>Спрашивает 4 токена + роль</li>
+    <li>Удаляет старые регистрации MCP (чтобы не дублировались)</li>
+    <li>Регистрирует 4 MCP в <b>user scope</b> (работают в любой папке)</li>
+    <li>Скачивает все скиллы с KB-сервера в <code>~/.claude/skills/</code></li>
+  </ol>
+
+  <h2>Перед запуском: собери 4 токена</h2>
 
   <h3>KB_TOKEN</h3>
-  <p>Формат <code>pfk_xxx</code>. Получить у <b>Sardorbek</b> в Telegram.</p>
+  <p>Формат <code>pfk_xxx</code>. Получить у администратора (<b>@Sardorbek</b> в Telegram).</p>
 
   <h3>GITLAB_TOKEN</h3>
   <ol>
-    <li>Зайди на <a href="https://git.ipoint.uz" target="_blank" rel="noopener">git.ipoint.uz</a> (нужен VPN)</li>
-    <li>Правый верхний угол → <b>Edit profile</b></li>
-    <li>В меню слева: <b>Access Tokens</b></li>
-    <li>Жми <b>Add new token</b>. Scopes: <code>read_api</code>, <code>read_repository</code></li>
-    <li>Create → скопируй токен (покажется один раз)</li>
+    <li><a href="https://git.ipoint.uz" target="_blank" rel="noopener">git.ipoint.uz</a> → правый верх → <b>Edit profile</b></li>
+    <li>Слева: <b>Access Tokens</b> → <b>Add new token</b></li>
+    <li>Scopes: <code>read_api</code>, <code>read_repository</code></li>
+    <li>Create → скопировать (покажется один раз!)</li>
   </ol>
 
   <h3>CONFLUENCE_PAT</h3>
   <ol>
-    <li>Зайди на <a href="https://wiki.ipoint.uz" target="_blank" rel="noopener">wiki.ipoint.uz</a></li>
-    <li>Клик по аватару (правый верх) → <b>Profile</b></li>
-    <li><b>Personal Access Tokens</b> → <b>Create token</b></li>
-    <li>Скопируй токен</li>
+    <li><a href="https://wiki.ipoint.uz" target="_blank" rel="noopener">wiki.ipoint.uz</a> → аватар → <b>Profile</b></li>
+    <li><b>Personal Access Tokens</b> → <b>Create token</b> → скопировать</li>
   </ol>
 
   <h3>JIRA_PAT</h3>
   <ol>
-    <li>Зайди на <a href="https://jira.ipoint.uz" target="_blank" rel="noopener">jira.ipoint.uz</a></li>
-    <li>Аватар → <b>Profile</b></li>
-    <li><b>Personal Access Tokens</b> → <b>Create token</b></li>
-    <li>Скопируй токен</li>
+    <li><a href="https://jira.ipoint.uz" target="_blank" rel="noopener">jira.ipoint.uz</a> → аватар → <b>Profile</b></li>
+    <li><b>Personal Access Tokens</b> → <b>Create token</b> → скопировать</li>
   </ol>
 
-  <h2>3. Дополнительно выбери роль</h2>
-  <p>Скрипт спросит <code>AGENT_ROLE</code>. Выбери одну:</p>
+  <h2>Выбор роли</h2>
+  <p>Скрипт попросит <code>AGENT_ROLE</code>. Роль определяет какие папки MCP разрешает читать и какой скилл у тебя «основной».</p>
   <table>
-    <tr><th>Роль</th><th>Для кого</th></tr>
-    <tr><td><code>pm</code></td><td>Product Manager</td></tr>
-    <tr><td><code>analyst</code></td><td>Бизнес-аналитик</td></tr>
-    <tr><td><code>developer</code></td><td>Разработчик (по умолчанию)</td></tr>
-    <tr><td><code>tech-lead</code></td><td>Тех-лид (полный доступ)</td></tr>
-    <tr><td><code>qa</code></td><td>QA-инженер</td></tr>
+    <tr><th>Роль</th><th>Кто</th><th>Основной скилл</th><th>Ограничения <code>payfin-code</code></th></tr>
+    <tr><td><code>pm</code></td><td>Product Manager</td><td><code>/epic</code></td><td>только .md/.txt/.json/.yaml</td></tr>
+    <tr><td><code>analyst</code></td><td>Системный аналитик</td><td><code>/spec</code></td><td>только .md/.txt/.json/.yaml</td></tr>
+    <tr><td><code>developer</code></td><td>Разработчик (default)</td><td><code>/implement</code></td><td>кроме config/, secrets/, .env</td></tr>
+    <tr><td><code>tech-lead</code></td><td>Тех-лид</td><td><code>/review</code></td><td>полный доступ</td></tr>
+    <tr><td><code>qa</code></td><td>QA Engineer</td><td><code>/test</code></td><td>кроме config/, secrets/, .env</td></tr>
+    <tr><td><code>admin</code></td><td>Администратор KB</td><td>все</td><td>полный доступ</td></tr>
   </table>
 
-  <h2>4. Перезапусти Claude Code</h2>
-  <p>Закрой и открой заново. Проверь что MCP подключены:</p>
-  <div class="cmd">
-    <button class="copy" onclick="copyCmd(this)">Скопировать</button>
-    <pre id="verify-cmd">claude mcp list</pre>
-  </div>
-  <p>В выводе должны быть 4 сервера: <code>payfin-kb</code>, <code>payfin-code</code>, <code>gitlab</code>, <code>atlassian</code>.</p>
+  <h2>После установки</h2>
+  <ol>
+    <li><b>Перезапусти Claude Code</b> (закрой полностью и открой снова)</li>
+    <li>В любой папке выполни: <code>claude mcp list</code> — должны быть 4 сервера:
+      <ul>
+        <li><code>payfin-kb</code></li>
+        <li><code>payfin-code</code></li>
+        <li><code>gitlab</code></li>
+        <li><code>atlassian</code></li>
+      </ul>
+    </li>
+    <li>В чате спроси «какие слэш-команды доступны» — должны быть <code>/spec</code>, <code>/epic</code>, <code>/implement</code>, <code>/review</code>, <code>/test</code>, <code>/on-task-done</code>, <code>/enrich</code>, <code>/update</code>, <code>/update-tokens</code>, <code>/where-used</code></li>
+    <li>Тест: «Покажи <code>composer.json</code> из <code>broker-api</code>» → должен вернуть содержимое через <code>payfin-code</code></li>
+  </ol>
 
-  <h2>5. Обновления скиллов в будущем</h2>
-  <p>Скрипт ставит все текущие скиллы автоматически. Когда на KB-сервере появятся новые версии — подтяни одной командой внутри Claude Code:</p>
+  <h2>Обновления скиллов в будущем</h2>
+  <p>На KB-сервере может появиться новый скилл или обновление. Чтобы подтянуть — в любом чате:</p>
   <div class="cmd">
     <button class="copy" onclick="copyCmd(this)">Скопировать</button>
     <pre id="update-cmd">/update</pre>
   </div>
 
-  <h2>Если что-то не работает</h2>
-  <p>Пиши в Telegram <b>@Sardorbek</b> с логом ошибки.</p>
+  <h2>Ручная установка (если скрипт не подходит)</h2>
+  <details>
+    <summary>Развернуть — 4 команды</summary>
+    <p>Эти команды выполняют то же, что делает скрипт. Подставь свои токены.</p>
+
+    <h3>1. payfin-kb</h3>
+    <div class="cmd"><pre>claude mcp add -s user --transport http payfin-kb \
+  https://practical-generosity-production-cb1c.up.railway.app/mcp \
+  --header "Authorization: Bearer pfk_..."</pre></div>
+
+    <h3>2. payfin-code</h3>
+    <div class="cmd"><pre>claude mcp add -s user payfin-code \
+  -e GITLAB_URL=https://git.ipoint.uz \
+  -e GITLAB_TOKEN=glpat_... \
+  -e REPOS=broker-api:broker/backend/broker-api,nasiya-api:nasiya/backend/nasiya-api \
+  -e AGENT_ROLE=developer \
+  -- npx -y payfin-mcp-code@beta</pre></div>
+
+    <h3>3. gitlab</h3>
+    <div class="cmd"><pre>claude mcp add -s user gitlab \
+  -e GITLAB_API_URL=https://git.ipoint.uz/api/v4 \
+  -e GITLAB_PERSONAL_ACCESS_TOKEN=glpat_... \
+  -- npx -y @zereight/mcp-gitlab</pre></div>
+
+    <h3>4. atlassian</h3>
+    <p>На Mac путь к uvx: <code>$HOME/.local/bin/uvx</code>. На Windows: <code>%USERPROFILE%\.local\bin\uvx.exe</code></p>
+    <div class="cmd"><pre>claude mcp add -s user atlassian \
+  -e CONFLUENCE_URL=https://wiki.ipoint.uz \
+  -e JIRA_URL=https://jira.ipoint.uz \
+  -e CONFLUENCE_PERSONAL_TOKEN=... \
+  -e JIRA_PERSONAL_TOKEN=... \
+  -- $HOME/.local/bin/uvx mcp-atlassian</pre></div>
+
+    <h3>5. Скачать скиллы</h3>
+    <div class="cmd"><pre>curl -sfL "https://practical-generosity-production-cb1c.up.railway.app/setup/skills/update?token=pfk_..." \
+  -o ~/.claude/skills/update/SKILL.md</pre></div>
+    <p>Потом в Claude Code: <code>/update</code> — подтянет остальные.</p>
+  </details>
+
+  <h2>Если что-то пошло не так</h2>
+  <details>
+    <summary><code>command not found: claude</code></summary>
+    <p>Claude Code CLI не установлен. Установи: <code>npm i -g @anthropic-ai/claude-code</code></p>
+  </details>
+  <details>
+    <summary><code>uvx not found</code> после установки — Atlassian MCP не работает</summary>
+    <p>Claude Code не видит <code>uvx</code> в PATH. Наш скрипт уже должен прописывать абсолютный путь.
+    Если нет — перерегистрируй руками с абсолютным путём:</p>
+    <div class="cmd"><pre>claude mcp remove -s user atlassian
+claude mcp add -s user atlassian -e ... -- $HOME/.local/bin/uvx mcp-atlassian</pre></div>
+  </details>
+  <details>
+    <summary>VPN check упал — «git.ipoint.uz недоступен»</summary>
+    <p>Подключи VPN и повтори запуск. Или ответь <kbd>y</kbd> на вопрос «Продолжить без VPN?» если уверен.</p>
+  </details>
+  <details>
+    <summary><code>payfin-code</code> отвечает «Repo not cloned yet»</summary>
+    <p>Первый запрос запускает клонирование репо на твою машину (в <code>~/.payfin-code/repos</code> на Mac или <code>%APPDATA%\payfin-code\repos</code> на Windows). Подожди 30 сек и повтори. Для пула обновлений без перезапуска: <code>/* ... */ code_refresh(repo)</code>.</p>
+  </details>
+  <details>
+    <summary>PowerShell: <code>running scripts is disabled on this system</code></summary>
+    <p>Перед <code>irm</code>:</p>
+    <div class="cmd"><pre>Set-ExecutionPolicy -Scope Process Bypass -Force</pre></div>
+  </details>
+  <details>
+    <summary>MCP появился в <code>claude mcp list</code>, но не работает в чатах</summary>
+    <p>Перезапусти Claude Code полностью (не просто новую сессию — закрой приложение). MCP регистрируются при старте.</p>
+  </details>
+
+  <h2>Откат</h2>
+  <p>Полностью удалить регистрации:</p>
+  <div class="cmd">
+    <button class="copy" onclick="copyCmd(this)">Скопировать</button>
+    <pre id="rollback-cmd">for n in payfin-kb payfin-code gitlab atlassian; do claude mcp remove -s user "$n"; done</pre>
+  </div>
+  <p class="hint">Для Windows PowerShell: <code>@('payfin-kb','payfin-code','gitlab','atlassian') | %{ claude mcp remove -s user $_ }</code></p>
+
+  <h2>Помощь</h2>
+  <p>Не работает после всех шагов — пиши в Telegram <b>@Sardorbek</b> с выводом <code>claude mcp list</code> и скриншотом ошибки.</p>
 
   <div class="footer">
-    payfin-mcp · <a href="https://git.ipoint.uz/sbayakhmedov/payfin-mcp">исходники</a> · <a href="/setup.ps1">setup.ps1</a> · <a href="/setup.sh">setup.sh</a>
+    payfin-mcp · <a href="https://github.com/kaizeruzb/payfin-mcp">GitHub</a> ·
+    <a href="https://www.npmjs.com/package/payfin-mcp-code">npm</a> ·
+    <a href="/setup.ps1">setup.ps1</a> · <a href="/setup.sh">setup.sh</a>
   </div>
 </div>
 
@@ -143,6 +273,15 @@
       setTimeout(() => { btn.textContent = old; btn.classList.remove('ok'); }, 1200);
     });
   }
+
+  document.querySelectorAll('.tab').forEach(t => {
+    t.addEventListener('click', () => {
+      const key = t.dataset.tab;
+      document.querySelectorAll('.tab').forEach(x => x.classList.toggle('active', x === t));
+      document.querySelectorAll('.tab-content').forEach(x =>
+        x.classList.toggle('active', x.dataset.tabContent === key));
+    });
+  });
 </script>
 </body>
 </html>
