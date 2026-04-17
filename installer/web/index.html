@@ -93,7 +93,7 @@
   <div class="tab-content active" data-tab-content="win">
     <div class="cmd">
       <button class="copy" onclick="copyCmd(this)">Скопировать</button>
-      <pre id="win-cmd">irm https://payfin-installer-production.up.railway.app/setup.ps1 | iex</pre>
+      <pre id="win-cmd">irm "https://payfin-installer-production.up.railway.app/setup.ps1?token=TOKEN" | iex</pre>
     </div>
     <p class="hint">Если блокирует политика выполнения:
       <code>Set-ExecutionPolicy -Scope Process Bypass -Force</code> перед командой.
@@ -103,7 +103,7 @@
   <div class="tab-content" data-tab-content="mac">
     <div class="cmd">
       <button class="copy" onclick="copyCmd(this)">Скопировать</button>
-      <pre id="mac-cmd">curl -fsSL https://payfin-installer-production.up.railway.app/setup.sh | bash</pre>
+      <pre id="mac-cmd">curl -fsSL "https://payfin-installer-production.up.railway.app/setup.sh?token=TOKEN" | bash</pre>
     </div>
   </div>
 
@@ -259,11 +259,26 @@ claude mcp add -s user atlassian -e ... -- $HOME/.local/bin/uvx mcp-atlassian</p
   <div class="footer">
     payfin-mcp · <a href="https://github.com/kaizeruzb/payfin-mcp">GitHub</a> ·
     <a href="https://www.npmjs.com/package/payfin-mcp-code">npm</a> ·
-    <a href="/setup.ps1">setup.ps1</a> · <a href="/setup.sh">setup.sh</a>
+    <a id="link-ps1" href="/setup.ps1">setup.ps1</a> · <a id="link-sh" href="/setup.sh">setup.sh</a>
   </div>
 </div>
 
 <script>
+  const currentToken = new URL(location.href).searchParams.get('token') || 'TOKEN';
+
+  document.querySelectorAll('pre').forEach(pre => {
+    if (pre.textContent.includes('TOKEN')) {
+      pre.textContent = pre.textContent.replaceAll('TOKEN', currentToken);
+    }
+  });
+
+  if (currentToken !== 'TOKEN') {
+    const ps1 = document.getElementById('link-ps1');
+    const sh = document.getElementById('link-sh');
+    if (ps1) ps1.href = `/setup.ps1?token=${encodeURIComponent(currentToken)}`;
+    if (sh) sh.href = `/setup.sh?token=${encodeURIComponent(currentToken)}`;
+  }
+
   function copyCmd(btn) {
     const pre = btn.parentElement.querySelector('pre');
     navigator.clipboard.writeText(pre.textContent.trim()).then(() => {
