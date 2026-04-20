@@ -125,10 +125,14 @@ $AGENT_ROLE = Read-Choice 'AGENT_ROLE' @('pm', 'analyst', 'developer', 'tech-lea
 
 # --- Удаление старых регистраций (чтобы переустановить чисто) -------------
 Write-Step 'Удаляю старые регистрации MCP (если были)'
+$prevEAP = $ErrorActionPreference
+$ErrorActionPreference = 'SilentlyContinue'
 foreach ($name in @('payfin-kb', 'payfin-code', 'gitlab', 'atlassian')) {
-    & claude mcp remove -s user $name 2>$null | Out-Null
-    & claude mcp remove -s local $name 2>$null | Out-Null
+    & claude mcp remove -s user $name *>$null
+    & claude mcp remove -s local $name *>$null
 }
+$global:LASTEXITCODE = 0
+$ErrorActionPreference = $prevEAP
 Write-Ok 'Готово к установке'
 
 # --- Установка MCP -------------------------------------------------------
