@@ -17,10 +17,34 @@
 
 Готово.
 
+## Опционально: spec-coverage hook
+
+PreToolUse hook для Claude Code. Блокирует запись `**/specs/**/*.md`, если упомянутые в спеке PHP-классы / DTO / миграции **не были прочитаны** в текущей сессии. Защита от instruction drift на длинных сессиях `/spec`.
+
+Установка (требует Python 3.8+):
+
+```powershell
+# Windows
+git clone https://github.com/kaizeruzb/payfin-mcp.git
+cd payfin-mcp
+.\installer\install-hook.ps1
+```
+
+```bash
+# Mac/Linux
+git clone https://github.com/kaizeruzb/payfin-mcp.git
+cd payfin-mcp
+./installer/install-hook.sh
+```
+
+Подробности и конфигурация — `installer/hooks/README.md`.
+
 ## Структура монорепо
 
 - `packages/mcp-code/` — npm-пакет `payfin-mcp-code` (форк `payfin-code` без Docker)
 - `installer/setup.ps1` — bootstrap-скрипт для сотрудника
+- `installer/install-hook.{ps1,sh}` — установка spec-coverage hook (отдельно от MCP)
+- `installer/hooks/` — исходники hook-скрипта
 - `installer/web/` — лендинг на Railway
 
 ## Для разработчика (этого репо)

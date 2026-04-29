@@ -1,0 +1,72 @@
+{
+  "_comment": "Default config for spec-coverage-gate. Override per-project via .claude/spec-coverage.config.json",
+  "matchers": [
+    "**/specs/**/*.md",
+    "**/spec-*.md",
+    "**/*-spec.md"
+  ],
+  "skip_paths": [
+    "**/CHANGELOG*.md",
+    "**/README*.md",
+    "**/_archive/**"
+  ],
+  "entity_suffixes": [
+    "Service",
+    "Controller",
+    "Client",
+    "DTO",
+    "Enum",
+    "Request",
+    "Response",
+    "Job",
+    "Repository",
+    "Resource",
+    "Middleware",
+    "Provider",
+    "Factory",
+    "Seeder",
+    "Observer",
+    "Action",
+    "Listener",
+    "Notification"
+  ],
+  "entity_globs": {
+    "Service": ["app/Services/**/{name}.php", "app/Services/V1/**/{name}.php"],
+    "Controller": ["app/Http/Controllers/**/{name}.php"],
+    "Client": ["app/Services/**/{name}.php", "app/Clients/**/{name}.php"],
+    "DTO": ["app/DTO/**/{name}.php", "app/DTOs/**/{name}.php"],
+    "Enum": ["app/Enums/**/{name}.php"],
+    "Request": ["app/Http/Requests/**/{name}.php"],
+    "Response": ["app/DTO/**/Response/{name}.php", "app/Http/Resources/**/{name}.php"],
+    "Job": ["app/Jobs/**/{name}.php"],
+    "Repository": ["app/Repositories/**/{name}.php"],
+    "Resource": ["app/Http/Resources/**/{name}.php"],
+    "Middleware": ["app/Http/Middleware/**/{name}.php"],
+    "Provider": ["app/Providers/**/{name}.php"],
+    "Factory": ["database/factories/**/{name}.php"],
+    "Seeder": ["database/seeders/**/{name}.php"],
+    "Observer": ["app/Observers/**/{name}.php"],
+    "Action": ["app/Actions/**/{name}.php"],
+    "Listener": ["app/Listeners/**/{name}.php"],
+    "Notification": ["app/Notifications/**/{name}.php"]
+  },
+  "migration_glob": "database/migrations/*{name}*.php",
+  "migration_patterns": [
+    "create_(\\w+)_table",
+    "add_(\\w+)_to_(\\w+)_table",
+    "drop_(\\w+)_from_(\\w+)_table",
+    "(\\d{4}_\\d{2}_\\d{2}_\\d{6}_\\w+)"
+  ],
+  "ignore_namespace_prefixes": [
+    "Stripe",
+    "Symfony",
+    "Illuminate",
+    "GuzzleHttp",
+    "Carbon",
+    "PHPUnit",
+    "Mockery",
+    "Predis",
+    "PhpOffice",
+    "Spatie"
+  ]
+}
